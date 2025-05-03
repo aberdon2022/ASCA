@@ -1,19 +1,21 @@
 package org.chatproject.ascp.dto;
 
+import org.chatproject.ascp.models.User;
+
 public class UserResponseDto {
     private String displayName;
     private String email;
 
-    public UserResponseDto(String displayName, String email) {
-        this.displayName = displayName;
-        this.email = email;
+    public UserResponseDto(User user) {
+        this.displayName = user.getDisplayName();
+        this.email = user.getEmail();
     }
 
     public String getDisplayName() {
-        return displayName;
+        return this.displayName;
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 }

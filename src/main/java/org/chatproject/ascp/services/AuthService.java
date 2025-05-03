@@ -26,7 +26,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void registerUser(UserDto userDto) {
+    public User registerUser(UserDto userDto) {
         String username = userDto.getDisplayName() + "_" + UUID.randomUUID().toString();
 
         Role role = roleRepository.findByAuthority("USER").orElseThrow(() -> new RuntimeException("Role not found"));
@@ -36,14 +36,15 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
 
         User user = new User(username, userDto.getDisplayName(), userDto.getEmail(), encodedPassword, roles);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public void loginUser(UserDto userDto) {
+    public User loginUser(UserDto userDto) {
         User user = userRepository.findByEmail(userDto.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
         if (!passwordEncoder.matches(userDto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
+        return user;
     }
 
 }

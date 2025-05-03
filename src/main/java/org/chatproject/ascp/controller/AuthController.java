@@ -24,8 +24,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Valid UserDto userDto) {
         try {
-            authService.registerUser(userDto);
-            UserResponseDto userResponseDto = new UserResponseDto(userDto.getDisplayName(), userDto.getEmail());
+            User user = authService.registerUser(userDto);
+            UserResponseDto userResponseDto = new UserResponseDto(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
@@ -35,8 +35,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<UserResponseDto> loginUser(@RequestBody @Valid UserDto userDto) {
         try {
-            authService.loginUser(userDto);
-            UserResponseDto userResponseDto = new UserResponseDto(userDto.getDisplayName(), userDto.getEmail());
+            User user = authService.loginUser(userDto);
+            UserResponseDto userResponseDto = new UserResponseDto(user);
             return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
