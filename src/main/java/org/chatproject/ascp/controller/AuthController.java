@@ -1,9 +1,8 @@
 package org.chatproject.ascp.controller;
 
 import jakarta.validation.Valid;
+import org.chatproject.ascp.dto.AuthResponseDto;
 import org.chatproject.ascp.dto.UserDto;
-import org.chatproject.ascp.dto.UserResponseDto;
-import org.chatproject.ascp.models.User;
 import org.chatproject.ascp.services.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,24 +21,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Valid UserDto userDto) {
-        try {
-            User user = authService.registerUser(userDto);
-            UserResponseDto userResponseDto = new UserResponseDto(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    public ResponseEntity<AuthResponseDto> registerUser(@RequestBody @Valid UserDto userDto) {
+        AuthResponseDto authResponseDto = authService.registerUser(userDto);
+        if (authResponseDto.getError() != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(authResponseDto);
         }
+        return ResponseEntity.status(HttpStatus.CREATED).body(authResponseDto);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDto> loginUser(@RequestBody @Valid UserDto userDto) {
-        try {
-            User user = authService.loginUser(userDto);
-            UserResponseDto userResponseDto = new UserResponseDto(user);
-            return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    public ResponseEntity<AuthResponseDto> loginUser(@RequestBody @Valid UserDto userDto) {
+        AuthResponseDto authResponseDto = authService.loginUser(userDto);
+        if (authResponseDto.getError() != null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResponseDto);
         }
+        return ResponseEntity.status(HttpStatus.OK).body(authResponseDto);
     }
 }
