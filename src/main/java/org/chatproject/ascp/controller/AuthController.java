@@ -2,7 +2,8 @@ package org.chatproject.ascp.controller;
 
 import jakarta.validation.Valid;
 import org.chatproject.ascp.dto.AuthResponseDto;
-import org.chatproject.ascp.dto.UserDto;
+import org.chatproject.ascp.dto.LoginDto;
+import org.chatproject.ascp.dto.RegisterDto;
 import org.chatproject.ascp.services.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,20 +22,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDto> registerUser(@RequestBody @Valid UserDto userDto) {
-        AuthResponseDto authResponseDto = authService.registerUser(userDto);
-        if (authResponseDto.getError() != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(authResponseDto);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(authResponseDto);
+    public ResponseEntity<AuthResponseDto> registerUser(@RequestBody @Valid RegisterDto registerDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.registerUser(registerDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> loginUser(@RequestBody @Valid UserDto userDto) {
-        AuthResponseDto authResponseDto = authService.loginUser(userDto);
-        if (authResponseDto.getError() != null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authResponseDto);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(authResponseDto);
+    public ResponseEntity<AuthResponseDto> loginUser(@RequestBody @Valid LoginDto loginDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(authService.loginUser(loginDto));
     }
 }
