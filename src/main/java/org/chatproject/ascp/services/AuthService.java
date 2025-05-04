@@ -51,9 +51,7 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(registerDto.password());
         User user = new User(username, registerDto.displayName(), registerDto.email(), encodedPassword, roles);
         userRepository.save(user);
-        Authentication auth = new UsernamePasswordAuthenticationToken(registerDto.email(), registerDto.password());
-        String token = tokenService.generateJwt(auth);
-        return new AuthResponseDto(user, token);
+        return new AuthResponseDto(user, null);
     }
 
     public AuthResponseDto loginUser(LoginDto loginDto) {
