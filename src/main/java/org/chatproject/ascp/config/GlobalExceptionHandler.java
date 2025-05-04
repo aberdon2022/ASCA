@@ -1,6 +1,6 @@
 package org.chatproject.ascp.config;
 
-import org.chatproject.ascp.exceptions.EmailAlreadyRegisteredException;
+import org.chatproject.ascp.exceptions.UsernameAlreadyRegisteredException;
 import org.chatproject.ascp.exceptions.InvalidCredentialsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(EmailAlreadyRegisteredException.class)
-    public ResponseEntity<ErrorResponse> handleEmailAlreadyRegisteredException(EmailAlreadyRegisteredException ex) {
+    @ExceptionHandler(UsernameAlreadyRegisteredException.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyRegisteredException(UsernameAlreadyRegisteredException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
 
     }

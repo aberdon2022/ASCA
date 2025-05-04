@@ -2,31 +2,24 @@ package org.chatproject.ascp.models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "messages")
 public class ChatMessage {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User sender;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User receiver;
     private String content;
-    private String sender;
-    private String receiver;
-    private String senderDisplayName;
-    private String receiverDisplayName;
-    private LocalDateTime timestamp;
-    @Enumerated(EnumType.STRING)
-    private ChatStatus status;
 
-    public ChatMessage() {}
+    protected ChatMessage() {}
 
-    public ChatMessage(String content, String sender, String receiver, LocalDateTime timestamp, ChatStatus status) {
-        this.content = content;
+    public ChatMessage(User sender, User receiver, String content) {
         this.sender = sender;
         this.receiver = receiver;
-        this.timestamp = timestamp;
-        this.status = status;
+        this.content = content;
     }
 
     public String getContent() {
@@ -45,52 +38,19 @@ public class ChatMessage {
         this.id = id;
     }
 
-    public String getReceiver() {
+    public User getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(String receiver) {
+    public void setReceiver(User receiver) {
         this.receiver = receiver;
     }
 
-    public String getSender() {
+    public User getSender() {
         return sender;
     }
 
-    public void setSender(String sender) {
+    public void setSender(User sender) {
         this.sender = sender;
     }
-
-    public ChatStatus getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(ChatStatus status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getReceiverDisplayName() {
-        return receiverDisplayName;
-    }
-
-    public void setReceiverDisplayName(String receiverDisplayName) {
-        this.receiverDisplayName = receiverDisplayName;
-    }
-
-    public String getSenderDisplayName() {
-        return senderDisplayName;
-    }
-
-    public void setSenderDisplayName(String senderDisplayName) {
-        this.senderDisplayName = senderDisplayName;
-    }
 }
-

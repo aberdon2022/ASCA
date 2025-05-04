@@ -18,10 +18,6 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
-    private String displayName;
-    @Column(nullable = false, unique = true)
-    private String email;
-    @Column(nullable = false)
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
@@ -34,10 +30,8 @@ public class User implements UserDetails {
         this.authorities = new HashSet<Role>();
     }
 
-    public User(String username, String displayName, String email, String password, Set<Role> authorities) {
+    public User(String username, String password, Set<Role> authorities) {
         this.username = username;
-        this.displayName = displayName;
-        this.email = email;
         this.password = password;
         this.authorities = authorities;
     }
@@ -64,10 +58,6 @@ public class User implements UserDetails {
         return this.username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -86,29 +76,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }

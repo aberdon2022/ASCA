@@ -3,7 +3,7 @@
     import org.chatproject.ascp.dto.AuthResponseDto;
     import org.chatproject.ascp.dto.LoginDto;
     import org.chatproject.ascp.dto.RegisterDto;
-    import org.chatproject.ascp.exceptions.EmailAlreadyRegisteredException;
+    import org.chatproject.ascp.exceptions.UsernameAlreadyRegisteredException;
     import org.chatproject.ascp.exceptions.InvalidCredentialsException;
     import org.chatproject.ascp.models.Role;
     import org.chatproject.ascp.models.User;
@@ -39,26 +39,25 @@
         }
 
         public AuthResponseDto registerUser(RegisterDto registerDto) {
-            if (userRepository.findByEmail(registerDto.email()).isPresent()) {
-                throw new EmailAlreadyRegisteredException("Email already registered");
+            if (userRepository.findByUsername(registerDto.username()).isPresent()) {
+                throw new UsernameAlreadyRegisteredException("Username already registered");
             }
 
-            String username = registerDto.displayName() + "@" + UUID.randomUUID();
             Role role = roleRepository.findByAuthority("USER").orElseThrow(() -> new RuntimeException("Role not found"));
             Set<Role> roles = new HashSet<>();
             roles.add(role);
 
             String encodedPassword = passwordEncoder.encode(registerDto.password());
-            User user = new User(username, registerDto.displayName(), registerDto.email(), encodedPassword, roles);
+            User user = new User(registerDto.username(), encodedPassword, roles);
             userRepository.save(user);
             return new AuthResponseDto(user, null);
         }
 
         public AuthResponseDto loginUser(LoginDto loginDto) {
             try {
-                Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password()));
+                Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.username(), loginDto.password()));
                 String token = tokenService.generateJwt(auth);
-                User user = userRepository.findByEmail(loginDto.email()).orElseThrow(() -> new RuntimeException("User not found"));
+                User user = userRepository.findByUsername(loginDto.username()).orElseThrow(() -> new RuntimeException("User not found"));
                 return new AuthResponseDto(user, token);
             } catch (AuthenticationException e) {
                 throw  new InvalidCredentialsException("Invalid credentials");
