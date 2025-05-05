@@ -1,9 +1,12 @@
 package org.chatproject.ascp.dto;
 
+import lombok.Data;
 import org.chatproject.ascp.models.User;
 
-public record RegisterResponseDto(String username) {
+@Data
+public class RegisterResponseDto {
+    private String username;
     public RegisterResponseDto(User user) {
-        this(user.getUsername());
+        this.username = user.getUsername();
     }
 }

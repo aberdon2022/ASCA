@@ -1,9 +1,12 @@
 package org.chatproject.ascp.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import lombok.Data;
 
-public record LoginDto (
-        @NotBlank String username,
-        @NotBlank @Size(min = 8) String password
-) {}
+@Data
+public class LoginDto {
+    @NotBlank
+    private String username;
+    @NotBlank
+    private String password;
+}

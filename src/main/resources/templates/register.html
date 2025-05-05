@@ -21,15 +21,15 @@
 <body>
 <div class="container d-flex justify-content-center align-items center">
     <div class="card login-card p-4 shadow-sm">
-        <h2 class="text-center mb 4">Login</h2>
-        <form th:action="@{/login}" method="POST">
+        <h2 class="text-center mb 4">Register</h2>
+        <form th:action="@{/register}" method="POST">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input th:field="*{loginDto.username}" type="text" id="username" name="username" class="form-control" required autofocus>
+                <input th:field="*{registerDto.username}" type="text" id="username" name="username" class="form-control" required autofocus>
             </div>
             <div class="mb-3">
                 <label for="password">Password:</label>
-                <input th:field="*{loginDto.password}" type="password" id="password" name="password" class="form-control" required>
+                <input th:field="*{registerDto.password}" type="password" id="password" name="password" class="form-control" required>
             </div>
             <input type="hidden" th:name="${_csrf.getParameterName()}" th:value="${_csrf.getToken()}"/>
             <div class="d-grid mb-3">
@@ -39,8 +39,6 @@
                 Invalid username or password
             </div>
         </form>
-        <div class="text-center">
-            <p>Don't have an account?<a th:href="@{/register}">Register</a></p></div>
     </div>
 </div>
 </body>
