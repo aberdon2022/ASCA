@@ -1,8 +1,9 @@
     package org.chatproject.ascp.services;
 
-    import org.chatproject.ascp.dto.AuthResponseDto;
+    import org.chatproject.ascp.dto.ApiAuthResponseDto;
     import org.chatproject.ascp.dto.LoginDto;
     import org.chatproject.ascp.dto.RegisterDto;
+    import org.chatproject.ascp.dto.RegisterResponseDto;
     import org.chatproject.ascp.exceptions.UsernameAlreadyRegisteredException;
     import org.chatproject.ascp.exceptions.InvalidCredentialsException;
     import org.chatproject.ascp.models.Role;
@@ -13,13 +14,13 @@
     import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
     import org.springframework.security.core.Authentication;
     import org.springframework.security.core.AuthenticationException;
+    import org.springframework.security.core.context.SecurityContextHolder;
     import org.springframework.security.crypto.password.PasswordEncoder;
     import org.springframework.stereotype.Service;
     import org.springframework.transaction.annotation.Transactional;
 
     import java.util.HashSet;
     import java.util.Set;
-    import java.util.UUID;
 
     @Service
     @Transactional
@@ -38,7 +39,7 @@
             this.tokenService = tokenService;
         }
 
-        public AuthResponseDto registerUser(RegisterDto registerDto) {
+        public RegisterResponseDto registerUser(RegisterDto registerDto) {
             if (userRepository.findByUsername(registerDto.username()).isPresent()) {
                 throw new UsernameAlreadyRegisteredException("Username already registered");
             }
@@ -50,15 +51,24 @@
             String encodedPassword = passwordEncoder.encode(registerDto.password());
             User user = new User(registerDto.username(), encodedPassword, roles);
             userRepository.save(user);
-            return new AuthResponseDto(user, null);
+            return new RegisterResponseDto(user);
         }
 
-        public AuthResponseDto loginUser(LoginDto loginDto) {
+        public void loginWeb(LoginDto loginDto) {
+            try {
+                Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.username(), loginDto.password()));
+                SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(auth));
+            } catch (AuthenticationException e) {
+                throw new InvalidCredentialsException("Invalid username or password");
+            }
+        }
+
+        public ApiAuthResponseDto loginApiUser(LoginDto loginDto) {
             try {
                 Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.username(), loginDto.password()));
                 String token = tokenService.generateJwt(auth);
                 User user = userRepository.findByUsername(loginDto.username()).orElseThrow(() -> new RuntimeException("User not found"));
-                return new AuthResponseDto(user, token);
+                return new ApiAuthResponseDto(user, token);
             } catch (AuthenticationException e) {
                 throw  new InvalidCredentialsException("Invalid credentials");
             }
