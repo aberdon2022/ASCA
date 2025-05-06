@@ -1,5 +1,6 @@
 let stompClient = null;
 let currUser = null;
+let csrfToken = null;
 
 function connect() {
     const socket = new SockJS('/ws');
@@ -147,11 +148,29 @@ function sendMessageToUser() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    currUser = document.getElementById('currentUser')?.value;
-    const csrfToken = document.getElementById('csrfToken')?.value;
+document.addEventListener('DOMContentLoaded', async () => {
+    csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+
+    try {
+        const response = await fetch('/users/current', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+        if (!response.ok) {
+            throw new Error('Error al cargar usuarios: ' + response.status);
+        }
+        currUser = await response.text();
+        console.log('Usuario actual:', currUser);
+    } catch (error) {
+        console.error('Error al cargar el usuario actual:', error);
+    }
+
     console.log('currUser:', currUser);
     console.log('csrfToken:', csrfToken);
+
     if (!currUser) {
         console.error('currentUser is undefined at startup');
         const chatBox = document.getElementById('chat-box');
@@ -162,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBox.appendChild(errorDiv);
         return;
     }
+
     connect();
     const searchForm = document.getElementById('searchForm');
     searchForm.addEventListener('submit', function (event) {
@@ -172,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
             body: formData,
             headers: {
                 'Accept': 'application/json'
-            }
+            },
         })
             .then(response => {
                 if (!response.ok) {

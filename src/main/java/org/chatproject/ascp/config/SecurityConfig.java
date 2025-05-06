@@ -26,12 +26,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
-import org.springframework.session.MapSessionRepository;
-import org.springframework.session.SessionRepository;
-import org.springframework.session.web.http.SessionRepositoryFilter;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @EnableWebSecurity
@@ -73,7 +67,7 @@ public class SecurityConfig {
         return http
                 .csrf(Customizer.withDefaults()) // Necesario para WebSocket
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/ws/**").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/ws/**", "/users/current").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
