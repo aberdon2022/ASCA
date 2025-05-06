@@ -1,7 +1,17 @@
 package org.chatproject.ascp.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "messages")
 public class ChatMessage {
@@ -13,44 +23,5 @@ public class ChatMessage {
     @ManyToOne(fetch = FetchType.EAGER)
     private User receiver;
     private String content;
-
-    protected ChatMessage() {}
-
-    public ChatMessage(User sender, User receiver, String content) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
+    private LocalDateTime timestamp;
 }

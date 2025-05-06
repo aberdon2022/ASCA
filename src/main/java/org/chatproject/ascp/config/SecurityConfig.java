@@ -7,9 +7,9 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.chatproject.ascp.utils.RSAKeyProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -26,13 +26,17 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.session.MapSessionRepository;
+import org.springframework.session.SessionRepository;
+import org.springframework.session.web.http.SessionRepositoryFilter;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
     private final RSAKeyProperties keys;
 
     public SecurityConfig(RSAKeyProperties keys) {
@@ -43,6 +47,8 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 
     @Bean
     @Order(1)
@@ -65,23 +71,15 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/**")
-                .csrf(Customizer.withDefaults())
+                .csrf(Customizer.withDefaults()) // Necesario para WebSocket
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
+                        .defaultSuccessUrl("/chat")
                         .permitAll()
                 )
                 .sessionManagement(session -> session
@@ -92,6 +90,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Primary
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(keys.getPublicKey()).build();
     }
