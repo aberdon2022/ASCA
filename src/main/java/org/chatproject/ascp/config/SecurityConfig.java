@@ -67,7 +67,7 @@ public class SecurityConfig {
         return http
                 .csrf(Customizer.withDefaults()) // Necesario para WebSocket
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/ws/**", "/users/current").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             headers: {
                 'Accept': 'application/json'
             },
-            credentials: 'include'
+            //credentials: 'include'
         });
         if (!response.ok) {
             throw new Error('Error al cargar usuarios: ' + response.status);
