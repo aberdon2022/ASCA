@@ -42,7 +42,7 @@ public class ChatController {
             return ResponseEntity.badRequest().build();
         }
         List<ChatMessage> messages = chatMessageRepository.findBySenderAndReceiverOrReceiverAndSender(
-                sender.get().getUsername(), receiver.get().getUsername(), receiver.get().getUsername(), sender.get().getUsername()
+                sender.get().getUsername(), receiver.get().getUsername(), sender.get().getUsername(), receiver.get().getUsername()
         );
         List<ChatMessageDto> chatMessages = messages.stream()
                 .map(message -> new ChatMessageDto(
